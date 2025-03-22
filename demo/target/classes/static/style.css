@@ -9,10 +9,9 @@
 
 body {
     font: 400 14px Roboto, sans-serif;
-    background: linear-gradient(135deg, #f0f0f5, #d4d4d8);
-    background-image: url('assets/chess_background.jpg');
+    /*background: linear-gradient(135deg, #f0f0f5, #d4d4d8);*/
     background-size: cover;
-    background-position: center;
+    /*background-position: center;*/
     -webkit-font-smoothing: antialiased;
     display: flex;
     justify-content: center;

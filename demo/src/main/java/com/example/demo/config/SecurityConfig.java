@@ -24,7 +24,7 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
+                        .defaultSuccessUrl("/game", true)
                         .permitAll()
                 )
                 .logout(Customizer.withDefaults());

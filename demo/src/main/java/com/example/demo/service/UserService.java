@@ -4,6 +4,7 @@ import com.example.demo.dto.UserDto;
 import com.example.demo.entity.UserEntity;
 import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,21 +16,27 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public UserEntity registerUser(UserDto userDto) {
-        // Проверяем, нет ли пользователя с таким username
         if (userRepository.existsByUsername(userDto.getUsername())) {
             throw new RuntimeException("Пользователь с таким именем уже существует");
         }
 
-        // Шифруем пароль
-        String encodedPassword = passwordEncoder.encode(userDto.getPassword());
-
-        // Создаём сущность пользователя
         UserEntity user = UserEntity.builder()
                 .username(userDto.getUsername())
-                .password(encodedPassword)
+                .password(passwordEncoder.encode(userDto.getPassword()))
+                .capturedCount(0)
                 .build();
-
-        // Сохраняем в базе
         return userRepository.save(user);
+    }
+
+    public void incrementCaptured(String username) {
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        user.setCapturedCount(user.getCapturedCount() + 1);
+        userRepository.save(user);
+    }
+
+    public UserEntity getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }

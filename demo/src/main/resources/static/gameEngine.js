@@ -138,9 +138,23 @@ function moveFig(fig, startPos, endPos) {
   const figOnBoard = board[startPos[0]][startPos[1]];
 
   if (figOnBoard != ".") {
+    // Если на целевой ячейке есть фигура, считаем, что она съедена
+    const endCell = document.getElementById(`${endPos[0] + 1}${endPos[1] + 1}`);
+    if (endCell.children.length > 0) {
+      // Отправляем запрос для инкрементации счётчика
+      fetch('/api/incrementCaptured', { method: 'POST' })
+          .then(() => {
+            // После успешного обновления можно запросить новый счётчик
+            // или просто увеличить значение в DOM:
+            let countElem = document.getElementById('capturedCount');
+            countElem.textContent = parseInt(countElem.textContent) + 1;
+          })
+          .catch(err => console.error(err));
+    }
+
     if (
-      (figOnBoard === figOnBoard.toUpperCase() && turn == "black") ||
-      (figOnBoard === figOnBoard.toLowerCase() && turn == "white")
+        (figOnBoard === figOnBoard.toUpperCase() && turn == "black") ||
+        (figOnBoard === figOnBoard.toLowerCase() && turn == "white")
     ) {
       if (figOnBoard === 'k') {
         whiteKingPos = [endPos[0], endPos[1]];
@@ -151,20 +165,20 @@ function moveFig(fig, startPos, endPos) {
       const oldBoard = JSON.parse(JSON.stringify(board));
       board[startPos[0]][startPos[1]] = ".";
       board[endPos[0]][endPos[1]] = figOnBoard;
-      
+
       const kingPos = turn === "white" ? whiteKingPos : blackKingPos;
       if (kingInCheck(kingPos, turn)) {
         board = oldBoard;
         return false;
       }
 
-      const endCell = document.getElementById(`${endPos[0] + 1}${endPos[1] + 1}`);
+      // Обновляем клетку
       endCell.textContent = "";
       endCell.appendChild(fig);
 
       const nextTurn = turn === "white" ? "black" : "white";
       const nextKingPos = nextTurn === "white" ? whiteKingPos : blackKingPos;
-      
+
       if (kingInCheck(nextKingPos, nextTurn)) {
         showCheckMsg(nextTurn);
         lightKing(nextTurn);
@@ -172,13 +186,13 @@ function moveFig(fig, startPos, endPos) {
           showMateMsg(nextTurn);
         }
       }
-
       turn = nextTurn;
       return true;
     }
   }
   return false;
 }
+
 
 function checkMove(startPos, endPos, flag = false) {
   const fig = board[startPos[0]][startPos[1]];
