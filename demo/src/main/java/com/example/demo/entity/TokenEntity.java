@@ -2,22 +2,27 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "users")
+@Table(name = "tokens")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserEntity {
+public class TokenEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String username;
+    private String token;
 
     @Column(nullable = false)
-    private String password;
+    private LocalDateTime expiryDate;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
 }

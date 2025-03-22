@@ -1,53 +1,58 @@
-<!--<!DOCTYPE html>-->
-<!--<html lang="en">-->
-<!--<head>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <meta http-equiv="X-UA-Compatible" content="IE=edge">-->
-<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
-
-<!--    <link rel="stylesheet" href="style.css">-->
-
-<!--    <title>Web Chess</title>-->
-<!--</head>-->
-<!--<body>-->
-<!--    <div id="main">-->
-<!--        <h1>Web Chess</h1>-->
-<!--        -->
-<!--        <button onclick="location.reload()">Restart Game</button>-->
-<!--        <div class="footer">-->
-<!--            The site was created by students Ala-Too Nurmukhamed and Azizkhan as a project work.-->
-<!--        </div>-->
-<!--    </div>-->
-
-<!--    <script src="gameEngine.js"></script>-->
-<!--</body>-->
-<!--</html>-->
-
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web Chess - Игра</title>
     <link rel="stylesheet" href="/style.css">
     <style>
-        /* Если нужно добавить стиль для хедера */
-        .user-info {
+        /* Стилизация карточки информации о пользователе */
+        .user-info-card {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255,255,255,0.8);
+            top: 20px;
+            right: 20px;
+            width: 340px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            font-family: 'Roboto', sans-serif;
+            color: #333;
+        }
+        .user-info-card h2 {
+            margin-top: 0;
+            font-size: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+        .user-info-card p {
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        .logout-button {
+            display: block;
+            margin-top: 15px;
             padding: 10px;
+            text-align: center;
+            background-color: #d9534f;
+            color: #fff;
+            text-decoration: none;
             border-radius: 5px;
             font-size: 14px;
+        }
+        .logout-button:hover {
+            background-color: #c9302c;
         }
     </style>
 </head>
 <body>
-<div class="user-info">
-    Пользователь: <strong th:text="${username}"></strong><br>
-    Сделано ходов за всё время: <strong id="capturedCount" th:text="${capturedCount}"></strong>
+<div class="user-info-card">
+    <h2 th:text="${username}">Имя пользователя</h2>
+    <p>Сделано ходов за всё время: <strong th:text="${capturedCount}">0</strong></p>
+    <p>Количество сыгранных игр: <strong th:text="${gamesPlayed > 0 ? gamesPlayed : 'в разработке...'}">в разработке...</strong></p>
+    <p>Количество выигранных игр: <strong th:text="${gamesWon > 0 ? gamesWon : 'в разработке...'}">в разработке...</strong></p>
+    <a href="/logout" class="logout-button">Выйти</a>
 </div>
+
 <div id="main">
     <h1>Web Chess</h1>
     <div class="board">
@@ -140,6 +145,3 @@
 <script src="/gameEngine.js"></script>
 </body>
 </html>
-
-
-

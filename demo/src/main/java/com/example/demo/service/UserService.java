@@ -14,6 +14,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final GameStatsService gameStatsService;
 
     public UserEntity registerUser(UserDto userDto) {
         if (userRepository.existsByUsername(userDto.getUsername())) {
@@ -23,16 +24,15 @@ public class UserService {
         UserEntity user = UserEntity.builder()
                 .username(userDto.getUsername())
                 .password(passwordEncoder.encode(userDto.getPassword()))
-                .capturedCount(0)
                 .build();
-        return userRepository.save(user);
+        user = userRepository.save(user);
+        // Создаем статистику для нового пользователя
+        gameStatsService.createStatsForUser(user);
+        return user;
     }
 
     public void incrementCaptured(String username) {
-        UserEntity user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        user.setCapturedCount(user.getCapturedCount() + 1);
-        userRepository.save(user);
+        gameStatsService.incrementCaptured(username);
     }
 
     public UserEntity getUserByUsername(String username) {
