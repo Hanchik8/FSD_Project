@@ -11,7 +11,7 @@ public class GlobalExceptionHandler {
     public ModelAndView handleAllExceptions(Exception ex) {
         ModelAndView mav = new ModelAndView();
         mav.addObject("errorMessage", ex.getMessage());
-        mav.setViewName("error"); // Создайте error.html в resources/templates
+        mav.setViewName("error");
         return mav;
     }
 }

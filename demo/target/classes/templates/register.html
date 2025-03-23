@@ -15,22 +15,26 @@
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
+    .error {
+      color: red;
+      font-size: 0.9em;
+    }
   </style>
 </head>
 <body>
 <div class="auth-container">
   <h2 class="text-center mb-4">Регистрация</h2>
-  <!-- Вывод сообщений об ошибках/успехе -->
-  <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
-  <div th:if="${message}" class="alert alert-success" role="alert" th:text="${message}"></div>
-  <form action="/register" method="post">
+  <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+  <form action="/register" method="post" th:object="${userDto}">
     <div class="mb-3">
       <label for="username" class="form-label">Имя пользователя</label>
-      <input type="text" class="form-control" id="username" name="username" placeholder="Введите имя пользователя" required>
+      <input type="text" class="form-control" id="username" th:field="*{username}" placeholder="Введите имя пользователя" required>
+      <div th:if="${#fields.hasErrors('username')}" class="error" th:errors="*{username}"></div>
     </div>
     <div class="mb-3">
       <label for="password" class="form-label">Пароль</label>
-      <input type="password" class="form-control" id="password" name="password" placeholder="Введите пароль" required>
+      <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="Введите пароль" required>
+      <div th:if="${#fields.hasErrors('password')}" class="error" th:errors="*{password}"></div>
     </div>
     <button type="submit" class="btn btn-primary w-100">Зарегистрироваться</button>
   </form>
