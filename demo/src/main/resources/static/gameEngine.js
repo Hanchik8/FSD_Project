@@ -138,14 +138,11 @@ function moveFig(fig, startPos, endPos) {
   const figOnBoard = board[startPos[0]][startPos[1]];
 
   if (figOnBoard != ".") {
-    // Если на целевой ячейке есть фигура, считаем, что она съедена
     const endCell = document.getElementById(`${endPos[0] + 1}${endPos[1] + 1}`);
     if (endCell.children.length > 0) {
-      // Отправляем запрос для инкрементации счётчика
       fetch('/api/incrementCaptured', { method: 'POST' })
           .then(() => {
-            // После успешного обновления можно запросить новый счётчик
-            // или просто увеличить значение в DOM:
+            // просим у бога счетчик
             let countElem = document.getElementById('capturedCount');
             countElem.textContent = parseInt(countElem.textContent) + 1;
           })

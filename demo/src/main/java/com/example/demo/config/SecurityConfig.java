@@ -21,31 +21,26 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    // Внедряем только successHandler и tokenService
     private final CustomAuthenticationSuccessHandler successHandler;
     private final TokenService tokenService;
-
-    // Убираем поле customUserDetailsService, чтобы не было циклической зависимости
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, UserDetailsService customUserDetailsService) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // Разрешаем доступ без аутентификации к /register и /login
                         .requestMatchers("/register", "/login").permitAll()
-                        // Остальные пути требуют аутентификации
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")             // Кастомная страница логина
-                        .successHandler(successHandler)   // Кастомный обработчик при успехе
-                        .defaultSuccessUrl("/game", true) // Куда перенаправлять после входа
+                        .loginPage("/login")
+                        .successHandler(successHandler)
+                        .defaultSuccessUrl("/game", true)
                         .permitAll()
                 )
-                .logout(Customizer.withDefaults()); // logout на /logout по умолчанию
+                .logout(Customizer.withDefaults());
 
-        // Добавляем кастомный фильтр "remember me" до UsernamePasswordAuthenticationFilter
+
         http.addFilterBefore(
                 new CustomRememberMeAuthenticationFilter(tokenService, customUserDetailsService),
                 UsernamePasswordAuthenticationFilter.class
@@ -56,7 +51,6 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // Хэширование пароля (обязательно для безопасности)
         return new BCryptPasswordEncoder();
     }
 

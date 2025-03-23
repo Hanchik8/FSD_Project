@@ -20,37 +20,29 @@ import java.io.IOException;
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private final TokenService tokenService;
-    // Заменяем зависимость от UserService на UserRepository,
-    // чтобы разорвать циклическую зависимость.
     private final UserRepository userRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
-        // Проверяем, выбрал ли пользователь опцию "Запомнить меня" (input с name="remember-me")
         String remember = request.getParameter("remember-me");
         if ("on".equals(remember)) {
-            // Получаем username из объекта principal
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String username = userDetails.getUsername();
 
-            // Загружаем UserEntity напрямую через UserRepository
             UserEntity userEntity = userRepository.findByUsername(username)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-            // Генерируем и сохраняем токен для пользователя
             var tokenEntity = tokenService.createTokenForUser(userEntity);
 
-            // Создаём HttpOnly cookie с токеном для механизма "remember me"
             Cookie cookie = new Cookie("rememberMeToken", tokenEntity.getToken());
             cookie.setHttpOnly(true);
             cookie.setPath("/");
-            cookie.setMaxAge(7 * 24 * 60 * 60); // 7 дней
+            cookie.setMaxAge(7 * 24 * 60 * 60);
             response.addCookie(cookie);
         }
 
-        // Перенаправляем пользователя на страницу /game после успешной аутентификации
         response.sendRedirect("/game");
     }
 }

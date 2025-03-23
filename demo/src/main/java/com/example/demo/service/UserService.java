@@ -26,7 +26,6 @@ public class UserService {
                 .password(passwordEncoder.encode(userDto.getPassword()))
                 .build();
         user = userRepository.save(user);
-        // Создаем статистику для нового пользователя
         gameStatsService.createStatsForUser(user);
         return user;
     }

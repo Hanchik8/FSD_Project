@@ -24,8 +24,6 @@ public class TokenController {
         String username = principal.getName();
         UserEntity user = userService.getUserByUsername(username);
 
-        // Здесь меняем generateToken(...) на createTokenForUser(...),
-        // если именно этот метод у вас в TokenService
         var tokenEntity = tokenService.createTokenForUser(user);
 
         Cookie cookie = new Cookie("rememberMeToken", tokenEntity.getToken());

@@ -33,7 +33,6 @@ public class CustomRememberMeAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
-        // Если пользователь ещё не аутентифицирован
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             Cookie[] cookies = request.getCookies();
             if (cookies != null) {
@@ -44,17 +43,13 @@ public class CustomRememberMeAuthenticationFilter extends OncePerRequestFilter {
 
                 if (tokenCookie != null) {
                     String tokenValue = tokenCookie.getValue();
-                    // Ищем токен в базе
                     TokenEntity tokenEntity = tokenService.findByToken(tokenValue);
 
-                    // Проверяем, что токен не просрочен
                     if (tokenEntity != null && tokenEntity.getExpiryDate().isAfter(LocalDateTime.now())) {
-                        // Загружаем данные пользователя (через наш UserDetailsService)
                         UserDetails userDetails = userDetailsService.loadUserByUsername(
                                 tokenEntity.getUser().getUsername()
                         );
 
-                        // Создаём объект аутентификации
                         if (userDetails != null) {
                             UsernamePasswordAuthenticationToken auth =
                                     new UsernamePasswordAuthenticationToken(

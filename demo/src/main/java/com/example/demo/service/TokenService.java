@@ -15,7 +15,6 @@ public class TokenService {
 
     private final TokenRepository tokenRepository;
 
-    // Срок жизни токена (7 дней)
     private final long TOKEN_VALIDITY_SECONDS = 7 * 24 * 60 * 60;
 
     /**
@@ -38,7 +37,6 @@ public class TokenService {
         return tokenRepository.findByToken(token).orElse(null);
     }
 
-    // Дополнительно, если нужно
     public boolean isTokenValid(String token) {
         return tokenRepository.findByToken(token)
                 .filter(t -> t.getExpiryDate().isAfter(LocalDateTime.now()))
